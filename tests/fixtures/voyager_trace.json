@@ -1,0 +1,127 @@
+{
+  "run_id": "fixture-voyager",
+  "question": "What year did Voyager 1 cross the heliopause, and what was the evidence?",
+  "model": "claude-haiku-4-5",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are Deep Research Lite, a research assistant."
+    },
+    {
+      "role": "user",
+      "content": "What year did Voyager 1 cross the heliopause, and what was the evidence?"
+    },
+    {
+      "role": "assistant",
+      "text": "",
+      "tool_calls": [
+        {
+          "id": "toolu_search",
+          "name": "web_search",
+          "args": {
+            "query": "Voyager 1 heliopause evidence",
+            "k": 5
+          }
+        }
+      ],
+      "latency_ms": 10
+    },
+    {
+      "role": "tool",
+      "name": "web_search",
+      "tool_use_id": "toolu_search",
+      "content": [
+        {
+          "url": "https://corpus.local/nasa-heliopause-announcement",
+          "title": "NASA Announcement: Voyager 1 Enters Interstellar Space",
+          "snippet": "On September 12, 2013, NASA held a press conference confirming that Voyager 1 had crossed the heliopause."
+        }
+      ],
+      "latency_ms": 2
+    },
+    {
+      "role": "assistant",
+      "text": "",
+      "tool_calls": [
+        {
+          "id": "toolu_fetch",
+          "name": "fetch_url",
+          "args": {
+            "url": "https://corpus.local/nasa-heliopause-announcement"
+          }
+        }
+      ],
+      "latency_ms": 12
+    },
+    {
+      "role": "tool",
+      "name": "fetch_url",
+      "tool_use_id": "toolu_fetch",
+      "content": "# NASA Announcement: Voyager 1 Enters Interstellar Space\n\nOn September 12, 2013, NASA held a press conference confirming that Voyager 1 had crossed the heliopause. The agency stated that the spacecraft actually made the crossing on or around August 25, 2012, based on retrospective analysis of particle flux and plasma density data.\n\nThe evidence for the crossing included a sharp drop in the count of solar wind particles reaching the spacecraft and a corresponding rise in galactic cosmic rays. Plasma wave instruments onboard detected the density of surrounding plasma jump by a factor of roughly 40, consistent with the denser interstellar medium.",
+      "latency_ms": 1
+    },
+    {
+      "role": "assistant",
+      "text": "",
+      "tool_calls": [
+        {
+          "id": "toolu_quotes",
+          "name": "extract_quotes",
+          "args": {
+            "text": "# NASA Announcement: Voyager 1 Enters Interstellar Space\n\nOn September 12, 2013, NASA held a press conference confirming that Voyager 1 had crossed the heliopause. The agency stated that the spacecraft actually made the crossing on or around August 25, 2012, based on retrospective analysis of particle flux and plasma density data.\n\nThe evidence for the crossing included a sharp drop in the count of solar wind particles reaching the spacecraft and a corresponding rise in galactic cosmic rays. Plasma wave instruments onboard detected the density of surrounding plasma jump by a factor of roughly 40, consistent with the denser interstellar medium.",
+            "topic": "Voyager 1 heliopause crossing date and evidence",
+            "max_quotes": 2
+          }
+        }
+      ],
+      "latency_ms": 10
+    },
+    {
+      "role": "tool",
+      "name": "extract_quotes",
+      "tool_use_id": "toolu_quotes",
+      "content": [
+        "The agency stated that the spacecraft actually made the crossing on or around August 25, 2012, based on retrospective analysis of particle flux and plasma density data.",
+        "The evidence for the crossing included a sharp drop in the count of solar wind particles reaching the spacecraft and a corresponding rise in galactic cosmic rays."
+      ],
+      "latency_ms": 5
+    },
+    {
+      "role": "assistant",
+      "text": "",
+      "tool_calls": [
+        {
+          "id": "toolu_finish",
+          "name": "finish",
+          "args": {
+            "answer": "Voyager 1 crossed the heliopause in 2012. NASA said the evidence included a sharp drop in solar wind particles, a rise in galactic cosmic rays, and supporting plasma density data.",
+            "citations": [
+              "https://corpus.local/nasa-heliopause-announcement"
+            ]
+          }
+        }
+      ],
+      "latency_ms": 9
+    },
+    {
+      "role": "tool",
+      "name": "finish",
+      "tool_use_id": "toolu_finish",
+      "content": "ok",
+      "latency_ms": 0
+    }
+  ],
+  "final_answer": "Voyager 1 crossed the heliopause in 2012. NASA said the evidence included a sharp drop in solar wind particles, a rise in galactic cosmic rays, and supporting plasma density data.",
+  "citations": [
+    "https://corpus.local/nasa-heliopause-announcement"
+  ],
+  "stopped_reason": "finish",
+  "total_tokens": {
+    "input": 500,
+    "output": 180
+  },
+  "cost_usd": 0.003,
+  "wall_time_ms": 3500,
+  "error": null
+}
+

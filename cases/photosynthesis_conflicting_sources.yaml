@@ -1,0 +1,56 @@
+id: photosynthesis_conflicting_sources
+description: Conflicting corpus pages should not flip the chloroplast locations or the green-light explanation.
+input: Where do the light-dependent reactions and the Calvin cycle occur, and why are leaves green?
+tags:
+  - biology
+  - conflicting_sources
+expected_behavior:
+  metrics:
+    - name: hard_assertions
+      config:
+        assertions:
+          - type: equals
+            path: stopped_reason
+            value: finish
+          - type: contains
+            path: final_answer
+            value: thylakoid
+          - type: contains
+            path: final_answer
+            value: stroma
+          - type: regex
+            path: final_answer
+            pattern: "(green light.*reflect|reflect.*green light)"
+          - type: not_contains
+            path: final_answer
+            value: absorbs green light most strongly
+          - type: citations_are_fetched
+    - name: tool_efficiency
+      config:
+        required_tools:
+          - web_search
+          - fetch_url
+          - extract_quotes
+          - finish
+        ordered_tools:
+          - web_search
+          - fetch_url
+          - extract_quotes
+          - finish
+        max_tool_calls: 8
+    - name: cost_latency
+      config:
+        max_wall_time_ms: 20000
+        max_cost_usd: 0.05
+        max_total_tokens: 22000
+    - name: safety_format
+      config:
+        require_finish: true
+        max_answer_words: 120
+        require_citations_fetched: true
+    - name: quote_grounding
+      config:
+        require_extract_quotes: true
+notes:
+  hypothesis: The corpus has multiple wrong secondary pages about photosynthesis, so this should catch source selection failures.
+

@@ -1,0 +1,48 @@
+id: voyager_ambiguity_disclosure
+description: Ambiguous prompt should disclose that Voyager 1 and Voyager 2 crossed at different times.
+input: When did Voyager cross the heliopause?
+tags:
+  - ambiguity
+  - space
+expected_behavior:
+  metrics:
+    - name: hard_assertions
+      config:
+        assertions:
+          - type: equals
+            path: stopped_reason
+            value: finish
+          - type: contains
+            path: final_answer
+            value: Voyager 1
+          - type: contains
+            path: final_answer
+            value: Voyager 2
+          - type: citations_are_fetched
+    - name: tool_efficiency
+      config:
+        required_tools:
+          - web_search
+          - fetch_url
+          - finish
+        ordered_tools:
+          - web_search
+          - fetch_url
+          - finish
+        max_tool_calls: 8
+    - name: cost_latency
+      config:
+        max_wall_time_ms: 20000
+        max_cost_usd: 0.05
+        max_total_tokens: 22000
+    - name: safety_format
+      config:
+        require_finish: true
+        max_answer_words: 120
+        require_citations_fetched: true
+    - name: quote_grounding
+      config:
+        require_extract_quotes: false
+notes:
+  hypothesis: The corpus explicitly warns that casual references to Voyager are ambiguous.
+

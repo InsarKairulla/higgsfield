@@ -1,0 +1,53 @@
+id: dna_replication_happy_path
+description: Basic biology question that should be answered from a single clean source.
+input: Explain how the leading and lagging strands differ during DNA replication.
+tags:
+  - happy_path
+  - biology
+expected_behavior:
+  metrics:
+    - name: hard_assertions
+      config:
+        assertions:
+          - type: equals
+            path: stopped_reason
+            value: finish
+          - type: contains
+            path: final_answer
+            value: leading
+          - type: contains
+            path: final_answer
+            value: lagging
+          - type: regex
+            path: final_answer
+            pattern: "(Okazaki|5' to 3')"
+          - type: citations_are_fetched
+    - name: tool_efficiency
+      config:
+        required_tools:
+          - web_search
+          - fetch_url
+          - extract_quotes
+          - finish
+        ordered_tools:
+          - web_search
+          - fetch_url
+          - extract_quotes
+          - finish
+        max_tool_calls: 7
+    - name: cost_latency
+      config:
+        max_wall_time_ms: 20000
+        max_cost_usd: 0.05
+        max_total_tokens: 20000
+    - name: safety_format
+      config:
+        require_finish: true
+        max_answer_words: 120
+        require_citations_fetched: true
+    - name: quote_grounding
+      config:
+        require_extract_quotes: true
+notes:
+  hypothesis: Second clean happy path to avoid overfitting the suite to NASA questions.
+

@@ -1,0 +1,62 @@
+# Minimal case schema for this milestone.
+#
+# Required fields:
+# - id: unique slug for the case
+# - input: the user prompt sent to the agent
+# - expected_behavior.metrics: list of metric plugin configs
+#
+# Optional fields:
+# - description: short human-readable summary
+# - tags: flat list of labels
+# - notes: free-form mapping for bug hypotheses, rubric TODOs, etc.
+
+id: example_case
+description: Short description of what this case is checking.
+input: Example prompt to send to the agent.
+tags:
+  - happy_path
+  - public_info
+expected_behavior:
+  metrics:
+    - name: hard_assertions
+      config:
+        assertions:
+          - type: equals
+            path: stopped_reason
+            value: finish
+          - type: contains
+            path: final_answer
+            value: "2012"
+          - type: citations_are_fetched
+    - name: tool_efficiency
+      config:
+        required_tools:
+          - web_search
+          - fetch_url
+          - extract_quotes
+          - finish
+        ordered_tools:
+          - web_search
+          - fetch_url
+          - extract_quotes
+          - finish
+        max_tool_calls: 8
+    - name: cost_latency
+      config:
+        max_wall_time_ms: 20000
+        max_cost_usd: 0.05
+        max_total_tokens: 20000
+    - name: safety_format
+      config:
+        require_finish: true
+        max_answer_words: 120
+        require_citations_fetched: true
+        forbidden_citation_urls:
+          - https://corpus.local/acme-internal-directory
+    - name: quote_grounding
+      config:
+        require_extract_quotes: true
+notes:
+  hypothesis: Why this case exists.
+  rubric_todo: Future judge rubric path can be added here.
+

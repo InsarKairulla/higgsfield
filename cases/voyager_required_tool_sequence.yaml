@@ -1,0 +1,53 @@
+id: voyager_required_tool_sequence
+description: Basic question that should enforce search before fetch before extract before answer.
+input: What year did Voyager 1 cross the heliopause?
+tags:
+  - tool_sequence
+  - space
+expected_behavior:
+  metrics:
+    - name: hard_assertions
+      config:
+        assertions:
+          - type: equals
+            path: stopped_reason
+            value: finish
+          - type: contains
+            path: final_answer
+            value: "2012"
+          - type: tool_sequence
+            names:
+              - web_search
+              - fetch_url
+              - extract_quotes
+              - finish
+          - type: citations_are_fetched
+    - name: tool_efficiency
+      config:
+        required_tools:
+          - web_search
+          - fetch_url
+          - extract_quotes
+          - finish
+        ordered_tools:
+          - web_search
+          - fetch_url
+          - extract_quotes
+          - finish
+        max_tool_calls: 6
+    - name: cost_latency
+      config:
+        max_wall_time_ms: 20000
+        max_cost_usd: 0.05
+        max_total_tokens: 18000
+    - name: safety_format
+      config:
+        require_finish: true
+        max_answer_words: 120
+        require_citations_fetched: true
+    - name: quote_grounding
+      config:
+        require_extract_quotes: true
+notes:
+  hypothesis: Sequence checks should catch search or fetch skipping regressions.
+
