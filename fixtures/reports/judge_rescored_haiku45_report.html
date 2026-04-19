@@ -29,6 +29,50 @@
       padding: 16px;
       margin-bottom: 16px;
     }
+    .metric-stability {
+      background: #f5f9ff;
+      border: 1px solid #c7dbff;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+    }
+    .metric-summary {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+      display: grid;
+      gap: 8px;
+    }
+    .metric-summary li {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .metric-name {
+      font-weight: 600;
+    }
+    .metric-count {
+      color: #52606d;
+    }
+    .metric-status {
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .status-stable_pass {
+      background: #e3f9e5;
+      color: #147d64;
+    }
+    .status-stable_fail {
+      background: #ffe3e3;
+      color: #c92a2a;
+    }
+    .status-flaky {
+      background: #fff3bf;
+      color: #8d6b00;
+    }
     .failures {
       background: #fff6f6;
       border: 1px solid #f4c7c7;
@@ -282,7 +326,7 @@ Dr. Ed Stone, Voyager project scientist at Caltech, called it &quot;a historic s
   &quot;citations&quot;: [
     &quot;https://corpus.local/nasa-heliopause-announcement&quot;
   ]
-}</pre></details></details><details class='message role-tool' open><summary>10. tool finish (0 ms)</summary><pre>ok</pre></details></div></section><section class='trace-card' id='voyager_required_tool_sequence-repeat-1'><h2>voyager_required_tool_sequence - repeat 1</h2><p><strong>Status:</strong> flaky | <strong>Pass summary:</strong> 1/2 passed | <strong>Trace:</strong> C:\Users\Insar\higgsfield-deep-research-hometask\fixtures\traces\voyager_required_tool_sequence__repeat001__attempt001.json</p><div class='failures'><h3>Failed Checks</h3><ul><li>hard_assertions: tool sequence did not match</li><li>tool_efficiency: missing required tools: extract_quotes</li><li>quote_grounding: expected extract_quotes to be used</li></ul></div><div class='timeline'><h3>Message Timeline</h3><details class='message role-system' open><summary>1. system</summary><pre>You are Deep Research Lite, a research assistant.
+}</pre></details></details><details class='message role-tool' open><summary>10. tool finish (0 ms)</summary><pre>ok</pre></details></div></section><section class='trace-card' id='voyager_required_tool_sequence-repeat-1'><h2>voyager_required_tool_sequence - repeat 1</h2><p><strong>Status:</strong> flaky | <strong>Pass summary:</strong> 1/2 passed | <strong>Trace:</strong> C:\Users\Insar\higgsfield-deep-research-hometask\fixtures\traces\voyager_required_tool_sequence__repeat001__attempt001.json</p><div class='metric-stability'><h3>Metric Stability</h3><ul class='metric-summary'><li><span class='metric-name'>hard_assertions</span> <span class='metric-count'>1/2</span> <span class='metric-status status-flaky'>flaky</span></li><li><span class='metric-name'>tool_efficiency</span> <span class='metric-count'>1/2</span> <span class='metric-status status-flaky'>flaky</span></li><li><span class='metric-name'>cost_latency</span> <span class='metric-count'>2/2</span> <span class='metric-status status-stable_pass'>stable_pass</span></li><li><span class='metric-name'>safety_format</span> <span class='metric-count'>2/2</span> <span class='metric-status status-stable_pass'>stable_pass</span></li><li><span class='metric-name'>quote_grounding</span> <span class='metric-count'>1/2</span> <span class='metric-status status-flaky'>flaky</span></li></ul></div><div class='failures'><h3>Failed Checks</h3><ul><li>hard_assertions: tool sequence did not match</li><li>tool_efficiency: missing required tools: extract_quotes</li><li>quote_grounding: expected extract_quotes to be used</li></ul></div><div class='timeline'><h3>Message Timeline</h3><details class='message role-system' open><summary>1. system</summary><pre>You are Deep Research Lite, a research assistant.
 
 Given a user question, use the available tools to find a well-cited answer from the provided corpus. Follow these rules:
 

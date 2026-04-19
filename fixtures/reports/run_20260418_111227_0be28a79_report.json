@@ -230,6 +230,48 @@
             ]
           }
         }
+      ],
+      "metric_summaries": [
+        {
+          "name": "hard_assertions",
+          "passed_count": 0,
+          "total_repeats": 1,
+          "pass_rate": 0.0,
+          "pass_rate_pct": 0.0,
+          "status": "stable_fail"
+        },
+        {
+          "name": "tool_efficiency",
+          "passed_count": 0,
+          "total_repeats": 1,
+          "pass_rate": 0.0,
+          "pass_rate_pct": 0.0,
+          "status": "stable_fail"
+        },
+        {
+          "name": "cost_latency",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "safety_format",
+          "passed_count": 0,
+          "total_repeats": 1,
+          "pass_rate": 0.0,
+          "pass_rate_pct": 0.0,
+          "status": "stable_fail"
+        },
+        {
+          "name": "quote_grounding",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        }
       ]
     },
     {
@@ -446,6 +488,48 @@
             ]
           }
         }
+      ],
+      "metric_summaries": [
+        {
+          "name": "hard_assertions",
+          "passed_count": 0,
+          "total_repeats": 1,
+          "pass_rate": 0.0,
+          "pass_rate_pct": 0.0,
+          "status": "stable_fail"
+        },
+        {
+          "name": "tool_efficiency",
+          "passed_count": 0,
+          "total_repeats": 1,
+          "pass_rate": 0.0,
+          "pass_rate_pct": 0.0,
+          "status": "stable_fail"
+        },
+        {
+          "name": "cost_latency",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "safety_format",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "quote_grounding",
+          "passed_count": 0,
+          "total_repeats": 1,
+          "pass_rate": 0.0,
+          "pass_rate_pct": 0.0,
+          "status": "stable_fail"
+        }
       ]
     },
     {
@@ -659,6 +743,48 @@
               }
             ]
           }
+        }
+      ],
+      "metric_summaries": [
+        {
+          "name": "hard_assertions",
+          "passed_count": 0,
+          "total_repeats": 1,
+          "pass_rate": 0.0,
+          "pass_rate_pct": 0.0,
+          "status": "stable_fail"
+        },
+        {
+          "name": "tool_efficiency",
+          "passed_count": 0,
+          "total_repeats": 1,
+          "pass_rate": 0.0,
+          "pass_rate_pct": 0.0,
+          "status": "stable_fail"
+        },
+        {
+          "name": "cost_latency",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "safety_format",
+          "passed_count": 0,
+          "total_repeats": 1,
+          "pass_rate": 0.0,
+          "pass_rate_pct": 0.0,
+          "status": "stable_fail"
+        },
+        {
+          "name": "quote_grounding",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
         }
       ]
     },
@@ -885,6 +1011,48 @@
               }
             ]
           }
+        }
+      ],
+      "metric_summaries": [
+        {
+          "name": "hard_assertions",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "tool_efficiency",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "cost_latency",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "safety_format",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "quote_grounding",
+          "passed_count": 0,
+          "total_repeats": 1,
+          "pass_rate": 0.0,
+          "pass_rate_pct": 0.0,
+          "status": "stable_fail"
         }
       ]
     },
@@ -1123,6 +1291,48 @@
               }
             ]
           }
+        }
+      ],
+      "metric_summaries": [
+        {
+          "name": "hard_assertions",
+          "passed_count": 0,
+          "total_repeats": 1,
+          "pass_rate": 0.0,
+          "pass_rate_pct": 0.0,
+          "status": "stable_fail"
+        },
+        {
+          "name": "tool_efficiency",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "cost_latency",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "safety_format",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "quote_grounding",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
         }
       ]
     },
@@ -1369,6 +1579,48 @@
             ]
           }
         }
+      ],
+      "metric_summaries": [
+        {
+          "name": "hard_assertions",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "tool_efficiency",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "cost_latency",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "safety_format",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "quote_grounding",
+          "passed_count": 0,
+          "total_repeats": 1,
+          "pass_rate": 0.0,
+          "pass_rate_pct": 0.0,
+          "status": "stable_fail"
+        }
       ]
     },
     {
@@ -1545,6 +1797,48 @@
               }
             ]
           }
+        }
+      ],
+      "metric_summaries": [
+        {
+          "name": "hard_assertions",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "tool_efficiency",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "cost_latency",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "safety_format",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "quote_grounding",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
         }
       ]
     },
@@ -1758,6 +2052,48 @@
               }
             ]
           }
+        }
+      ],
+      "metric_summaries": [
+        {
+          "name": "hard_assertions",
+          "passed_count": 0,
+          "total_repeats": 1,
+          "pass_rate": 0.0,
+          "pass_rate_pct": 0.0,
+          "status": "stable_fail"
+        },
+        {
+          "name": "tool_efficiency",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "cost_latency",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "safety_format",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "quote_grounding",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
         }
       ]
     },
@@ -1987,6 +2323,48 @@
             ]
           }
         }
+      ],
+      "metric_summaries": [
+        {
+          "name": "hard_assertions",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "tool_efficiency",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "cost_latency",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "safety_format",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "quote_grounding",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        }
       ]
     },
     {
@@ -2209,6 +2587,48 @@
               }
             ]
           }
+        }
+      ],
+      "metric_summaries": [
+        {
+          "name": "hard_assertions",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "tool_efficiency",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "cost_latency",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "safety_format",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
+        },
+        {
+          "name": "quote_grounding",
+          "passed_count": 1,
+          "total_repeats": 1,
+          "pass_rate": 1.0,
+          "pass_rate_pct": 100.0,
+          "status": "stable_pass"
         }
       ]
     }
