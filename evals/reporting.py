@@ -38,6 +38,54 @@ def _rate(pass_count: int, total_repeats: int) -> float:
     return pass_count / total_repeats
 
 
+def _metric_repeat_status(pass_count: int, total_repeats: int) -> str:
+    if pass_count == total_repeats:
+        return "stable_pass"
+    if pass_count == 0:
+        return "stable_fail"
+    return "flaky"
+
+
+def _summarize_metrics(repeats: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    if not repeats:
+        return []
+
+    metric_names: list[str] = []
+    for repeat in repeats:
+        score = repeat.get("score") or {}
+        for metric in score.get("metrics", []):
+            name = str(metric.get("name") or "")
+            if name and name not in metric_names:
+                metric_names.append(name)
+
+    summaries: list[dict[str, Any]] = []
+    total_repeats = len(repeats)
+    for name in metric_names:
+        passed_count = 0
+        for repeat in repeats:
+            score = repeat.get("score") or {}
+            metric_map = {
+                str(metric.get("name") or ""): metric for metric in score.get("metrics", [])
+            }
+            metric = metric_map.get(name)
+            if metric and bool(metric.get("passed")):
+                passed_count += 1
+
+        pass_rate = _rate(passed_count, total_repeats)
+        summaries.append(
+            {
+                "name": name,
+                "passed_count": passed_count,
+                "total_repeats": total_repeats,
+                "pass_rate": round(pass_rate, 4),
+                "pass_rate_pct": round(pass_rate * 100, 1),
+                "status": _metric_repeat_status(passed_count, total_repeats),
+            }
+        )
+
+    return summaries
+
+
 def _runtime_error_message(stopped_reason: str, error: Any) -> str:
     if stopped_reason != "error" or not error:
         return ""
@@ -130,6 +178,7 @@ def build_report(
                 "pass_summary": f"{pass_count}/{total_repeats} passed",
                 "failure_reason": failure_reason,
                 "runtime_error": runtime_error,
+                "metric_summaries": _summarize_metrics(repeats),
                 "repeats": repeats,
             }
         )
@@ -290,6 +339,16 @@ def format_report_text(report: dict[str, Any]) -> str:
             elif case.get("failure_reason"):
                 line += f" - {case['failure_reason']}"
         lines.append(line)
+        metric_summaries = case.get("metric_summaries") or []
+        if case.get("total_repeats", 0) > 1 and metric_summaries:
+            metrics_text = ", ".join(
+                (
+                    f"{metric['name']} {metric['passed_count']}/{metric['total_repeats']}"
+                    f" ({metric['status']})"
+                )
+                for metric in metric_summaries
+            )
+            lines.append(f"      metrics: {metrics_text}")
 
     diff = report.get("diff") or {}
     if diff.get("against"):

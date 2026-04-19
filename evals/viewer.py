@@ -33,6 +33,32 @@ def _resolve_trace_path(output_dir: Path, trace_path: str) -> Path:
     return candidate if candidate.is_absolute() else output_dir / candidate
 
 
+def _render_metric_summaries(case: dict[str, Any]) -> str:
+    metric_summaries = case.get("metric_summaries") or []
+    if case.get("total_repeats", 0) <= 1 or not metric_summaries:
+        return ""
+
+    items = []
+    for metric in metric_summaries:
+        items.append(
+            "<li>"
+            f"<span class='metric-name'>{html.escape(metric['name'])}</span> "
+            f"<span class='metric-count'>{metric['passed_count']}/{metric['total_repeats']}</span> "
+            f"<span class='metric-status status-{html.escape(metric['status'])}'>"
+            f"{html.escape(metric['status'])}</span>"
+            "</li>"
+        )
+
+    return (
+        "<div class='metric-stability'>"
+        "<h3>Metric Stability</h3>"
+        "<ul class='metric-summary'>"
+        + "".join(items)
+        + "</ul>"
+        "</div>"
+    )
+
+
 def _render_message(index: int, message: dict[str, Any]) -> str:
     role = html.escape(str(message.get("role") or "unknown"))
     label = f"{index + 1}. {role}"
@@ -77,7 +103,9 @@ def render_run_viewer(report: dict[str, Any], output_dir: str | Path) -> str:
     )
 
     for case in ordered_cases:
-        for repeat in case.get("repeats", []):
+        repeats = case.get("repeats", [])
+        metric_summary_html = _render_metric_summaries(case)
+        for repeat_index, repeat in enumerate(repeats):
             section_id = f"{case['case_id']}-repeat-{repeat['repeat_index']}"
             nav_items.append(
                 "<li>"
@@ -104,6 +132,7 @@ def render_run_viewer(report: dict[str, Any], output_dir: str | Path) -> str:
                 f"<p><strong>Status:</strong> {html.escape(case['status'])} | "
                 f"<strong>Pass summary:</strong> {html.escape(case['pass_summary'])} | "
                 f"<strong>Trace:</strong> {html.escape(repeat['trace_path'])}</p>"
+                f"{metric_summary_html if repeat_index == 0 else ''}"
                 "<div class='failures'>"
                 "<h3>Failed Checks</h3>"
                 f"{failure_html}"
@@ -145,6 +174,50 @@ def render_run_viewer(report: dict[str, Any], output_dir: str | Path) -> str:
       border-radius: 8px;
       padding: 16px;
       margin-bottom: 16px;
+    }}
+    .metric-stability {{
+      background: #f5f9ff;
+      border: 1px solid #c7dbff;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+    }}
+    .metric-summary {{
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+      display: grid;
+      gap: 8px;
+    }}
+    .metric-summary li {{
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }}
+    .metric-name {{
+      font-weight: 600;
+    }}
+    .metric-count {{
+      color: #52606d;
+    }}
+    .metric-status {{
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }}
+    .status-stable_pass {{
+      background: #e3f9e5;
+      color: #147d64;
+    }}
+    .status-stable_fail {{
+      background: #ffe3e3;
+      color: #c92a2a;
+    }}
+    .status-flaky {{
+      background: #fff3bf;
+      color: #8d6b00;
     }}
     .failures {{
       background: #fff6f6;
@@ -201,4 +274,3 @@ def write_run_viewer(report: dict[str, Any], output_dir: str | Path) -> Path:
     html_path = output_path / "report.html"
     html_path.write_text(render_run_viewer(report, output_path), encoding="utf-8")
     return html_path
-

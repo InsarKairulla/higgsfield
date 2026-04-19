@@ -11,13 +11,14 @@ from pathlib import Path
 from unittest import mock
 
 from evals.cases import load_case
-from evals.reporting import build_diff, format_report_text, load_report
+from evals.reporting import build_diff, build_report, format_report_text, load_report
 from evals.runner import (
     _load_default_run_agent,
     discover_saved_traces,
     rescore_saved_traces,
     run_live_suite,
 )
+from evals.scoring import CaseScore, MetricResult
 from evals.viewer import render_run_viewer
 
 
@@ -32,6 +33,30 @@ class _FakeRunResult:
         return copy.deepcopy(self._payload)
 
 
+class _FakeTrace:
+    def __init__(
+        self,
+        *,
+        question: str = "Test question?",
+        run_id: str = "test-run",
+        stopped_reason: str = "finish",
+        error: str | None = None,
+        wall_time_ms: int = 25,
+        cost_usd: float = 0.001,
+        tool_calls: int = 2,
+    ) -> None:
+        self.question = question
+        self.run_id = run_id
+        self.stopped_reason = stopped_reason
+        self.error = error
+        self.wall_time_ms = wall_time_ms
+        self.cost_usd = cost_usd
+        self._tool_calls = tool_calls
+
+    def tool_call_count(self) -> int:
+        return self._tool_calls
+
+
 def _fixture_trace() -> dict:
     return json.loads((ROOT / "tests" / "fixtures" / "voyager_trace.json").read_text(encoding="utf-8"))
 
@@ -42,6 +67,57 @@ def _make_case_dir(base_dir: str | Path, *case_names: str) -> Path:
     for case_name in case_names:
         shutil.copy2(ROOT / "cases" / case_name, destination / case_name)
     return destination
+
+
+def _make_case_score(
+    *,
+    case_id: str = "voyager_happy_path",
+    metric_results: list[tuple[str, bool]],
+) -> CaseScore:
+    metrics = [
+        MetricResult(
+            name=name,
+            passed=passed,
+            score=1.0 if passed else 0.0,
+            summary=f"{name} {'passed' if passed else 'failed'}",
+        )
+        for name, passed in metric_results
+    ]
+    return CaseScore(
+        case_id=case_id,
+        passed=all(metric.passed for metric in metrics),
+        metrics=metrics,
+    )
+
+
+def _make_execution(
+    *,
+    case_name: str,
+    repeat_index: int,
+    score: CaseScore,
+    trace_path: str | Path,
+) -> dict:
+    case = load_case(ROOT / "cases" / case_name)
+    trace = _FakeTrace(question=case.input, run_id=f"{case.case_id}-repeat-{repeat_index}")
+    trace_path = Path(trace_path)
+    return {
+        "case": case,
+        "repeat_index": repeat_index,
+        "trace": trace,
+        "trace_path": trace_path,
+        "selected_attempt": 1,
+        "attempts": [
+            {
+                "attempt_index": 1,
+                "selected_for_scoring": True,
+                "transient_error": False,
+                "stopped_reason": trace.stopped_reason,
+                "error": trace.error,
+                "trace_path": trace_path,
+            }
+        ],
+        "score": score,
+    }
 
 
 class LiveRunnerReportingTests(unittest.TestCase):
@@ -334,6 +410,177 @@ class LiveRunnerReportingTests(unittest.TestCase):
 
         self.assertIn("Runtime errors: 1 repeat(s)", text)
         self.assertIn("runtime error: RuntimeError: ANTHROPIC_API_KEY is not set", text)
+
+    def test_build_report_aggregates_metric_flakiness_across_repeats(self) -> None:
+        executions = [
+            _make_execution(
+                case_name="voyager_happy_path.yaml",
+                repeat_index=1,
+                score=_make_case_score(
+                    metric_results=[
+                        ("hard_assertions", True),
+                        ("quote_grounding", False),
+                        ("tool_efficiency", True),
+                    ]
+                ),
+                trace_path="trace-repeat-1.json",
+            ),
+            _make_execution(
+                case_name="voyager_happy_path.yaml",
+                repeat_index=2,
+                score=_make_case_score(
+                    metric_results=[
+                        ("hard_assertions", True),
+                        ("quote_grounding", False),
+                        ("tool_efficiency", False),
+                    ]
+                ),
+                trace_path="trace-repeat-2.json",
+            ),
+        ]
+
+        report = build_report(
+            executions,
+            run_id="demo",
+            mode="rescore",
+            output_dir=ROOT / "eval_runs" / "demo",
+            cases_dir=ROOT / "cases",
+            config={"repeats": 2},
+        )
+
+        case = report["cases"][0]
+        metric_summaries = {metric["name"]: metric for metric in case["metric_summaries"]}
+
+        self.assertEqual(metric_summaries["hard_assertions"]["passed_count"], 2)
+        self.assertEqual(metric_summaries["hard_assertions"]["status"], "stable_pass")
+        self.assertEqual(metric_summaries["quote_grounding"]["passed_count"], 0)
+        self.assertEqual(metric_summaries["quote_grounding"]["status"], "stable_fail")
+        self.assertEqual(metric_summaries["tool_efficiency"]["passed_count"], 1)
+        self.assertEqual(metric_summaries["tool_efficiency"]["status"], "flaky")
+
+    def test_report_text_includes_metric_stability_for_repeated_cases(self) -> None:
+        executions = [
+            _make_execution(
+                case_name="voyager_happy_path.yaml",
+                repeat_index=1,
+                score=_make_case_score(metric_results=[("hard_assertions", True)]),
+                trace_path="trace-repeat-1.json",
+            ),
+            _make_execution(
+                case_name="voyager_happy_path.yaml",
+                repeat_index=2,
+                score=_make_case_score(metric_results=[("hard_assertions", False)]),
+                trace_path="trace-repeat-2.json",
+            ),
+        ]
+
+        report = build_report(
+            executions,
+            run_id="demo",
+            mode="rescore",
+            output_dir=ROOT / "eval_runs" / "demo",
+            cases_dir=ROOT / "cases",
+            config={"repeats": 2},
+        )
+
+        text = format_report_text(report)
+
+        self.assertIn("metrics: hard_assertions 1/2 (flaky)", text)
+
+    def test_viewer_renders_metric_stability_for_repeated_cases(self) -> None:
+        trace = _fixture_trace()
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_dir = Path(tmpdir)
+            trace_paths = []
+            for repeat_index in (1, 2):
+                trace_path = output_dir / f"trace-{repeat_index}.json"
+                trace["eval"] = {
+                    "case_id": "voyager_happy_path",
+                    "repeat_index": repeat_index,
+                    "attempt_index": 1,
+                    "selected_for_scoring": True,
+                    "transient_error": False,
+                }
+                trace_path.write_text(json.dumps(trace, indent=2), encoding="utf-8")
+                trace_paths.append(trace_path.name)
+
+            report = {
+                "run_id": "demo",
+                "mode": "rescore",
+                "summary": {"passed_repeats": 1, "repeat_count": 2, "pass_rate_pct": 50.0},
+                "cases": [
+                    {
+                        "case_id": "voyager_happy_path",
+                        "status": "flaky",
+                        "pass_summary": "1/2 passed",
+                        "total_repeats": 2,
+                        "metric_summaries": [
+                            {
+                                "name": "hard_assertions",
+                                "passed_count": 2,
+                                "total_repeats": 2,
+                                "pass_rate": 1.0,
+                                "pass_rate_pct": 100.0,
+                                "status": "stable_pass",
+                            },
+                            {
+                                "name": "tool_efficiency",
+                                "passed_count": 1,
+                                "total_repeats": 2,
+                                "pass_rate": 0.5,
+                                "pass_rate_pct": 50.0,
+                                "status": "flaky",
+                            },
+                            {
+                                "name": "quote_grounding",
+                                "passed_count": 0,
+                                "total_repeats": 2,
+                                "pass_rate": 0.0,
+                                "pass_rate_pct": 0.0,
+                                "status": "stable_fail",
+                            },
+                        ],
+                        "repeats": [
+                            {
+                                "repeat_index": 1,
+                                "trace_path": trace_paths[0],
+                                "score": {
+                                    "metrics": [
+                                        {
+                                            "name": "hard_assertions",
+                                            "passed": True,
+                                            "summary": "hard_assertions passed",
+                                            "details": {},
+                                        }
+                                    ]
+                                },
+                            },
+                            {
+                                "repeat_index": 2,
+                                "trace_path": trace_paths[1],
+                                "score": {
+                                    "metrics": [
+                                        {
+                                            "name": "hard_assertions",
+                                            "passed": False,
+                                            "summary": "hard_assertions failed",
+                                            "details": {},
+                                        }
+                                    ]
+                                },
+                            },
+                        ],
+                    }
+                ],
+            }
+
+            html = render_run_viewer(report, output_dir)
+
+            self.assertIn("Metric Stability", html)
+            self.assertIn("stable_pass", html)
+            self.assertIn("stable_fail", html)
+            self.assertIn("tool_efficiency", html)
 
 
 if __name__ == "__main__":
