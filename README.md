@@ -300,9 +300,6 @@ Manual spot-check agreement: 7/8 = 87.5%
 | dna_replication_happy_path | factual_correctness | pass | pass | yes | The biology explanation itself is correct and supported by the fetched page. |
 | dna_replication_happy_path | citation_grounding_quality | pass | mixed | no | Judge is a bit too generous here because deterministic quote grounding caught a non-verbatim extracted quote. |
 
-  `Manual spot-check agreement: X/Y = Z%`
-
-
 ### Known judge limitations and failure modes
 
 - The judge only sees the evidence present in the trace. If retrieval is weak, the judge is constrained too.
