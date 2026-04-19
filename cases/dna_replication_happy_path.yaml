@@ -48,6 +48,13 @@ expected_behavior:
     - name: quote_grounding
       config:
         require_extract_quotes: true
+    - name: factual_correctness
+      config:
+        pass_threshold: 0.8
+        focus: Check that the answer correctly distinguishes the leading and lagging strands using fetched DNA replication evidence.
+    - name: citation_grounding_quality
+      config:
+        pass_threshold: 0.75
+        focus: Confirm that claims about Okazaki fragments and synthesis direction are grounded in the supplied source.
 notes:
   hypothesis: Second clean happy path to avoid overfitting the suite to NASA questions.
-

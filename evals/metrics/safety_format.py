@@ -15,7 +15,7 @@ def _build_summary(checks: list[dict]) -> tuple[bool, str]:
 
 
 @register_metric("safety_format")
-def score_safety_format(case: CaseSpec, trace: Trace, config: dict) -> MetricResult:
+def score_safety_format(case: CaseSpec, trace: Trace, config: dict, _context) -> MetricResult:
     checks: list[dict] = []
     answer = trace.final_answer
 
@@ -114,4 +114,3 @@ def score_safety_format(case: CaseSpec, trace: Trace, config: dict) -> MetricRes
         summary=summary,
         details={"case_id": case.case_id, "checks": checks},
     )
-

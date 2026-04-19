@@ -47,6 +47,13 @@ expected_behavior:
     - name: quote_grounding
       config:
         require_extract_quotes: true
+    - name: factual_correctness
+      config:
+        pass_threshold: 0.8
+        focus: Prefer the public source that explicitly supersedes earlier payload numbers.
+    - name: contradiction_disclosure
+      config:
+        pass_threshold: 0.75
+        focus: Check whether the answer acknowledges that an older datasheet conflicts with a newer update.
 notes:
   hypothesis: Public Acme pages conflict on payload, and one source explicitly says it supersedes older numbers.
-

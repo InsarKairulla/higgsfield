@@ -7,7 +7,7 @@ from evals.trace import Trace
 
 
 @register_metric("hard_assertions")
-def score_hard_assertions(case: CaseSpec, trace: Trace, config: dict) -> MetricResult:
+def score_hard_assertions(case: CaseSpec, trace: Trace, config: dict, _context) -> MetricResult:
     assertions = config.get("assertions") or []
     outcomes = evaluate_assertions(trace, assertions)
     passed = bool(outcomes) and all(outcome.passed for outcome in outcomes)
@@ -25,4 +25,3 @@ def score_hard_assertions(case: CaseSpec, trace: Trace, config: dict) -> MetricR
             "assertions": [outcome.to_dict() for outcome in outcomes],
         },
     )
-

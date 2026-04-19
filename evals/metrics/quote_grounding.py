@@ -6,7 +6,7 @@ from evals.trace import Trace
 
 
 @register_metric("quote_grounding")
-def score_quote_grounding(case: CaseSpec, trace: Trace, config: dict) -> MetricResult:
+def score_quote_grounding(case: CaseSpec, trace: Trace, config: dict, _context) -> MetricResult:
     extract_calls = trace.tool_calls("extract_quotes")
     require_extract_quotes = bool(config.get("require_extract_quotes"))
 
@@ -57,4 +57,3 @@ def score_quote_grounding(case: CaseSpec, trace: Trace, config: dict) -> MetricR
             "violations": violations,
         },
     )
-

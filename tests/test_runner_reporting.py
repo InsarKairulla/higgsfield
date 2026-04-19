@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import json
+import os
 import shutil
 import tempfile
 import types
@@ -148,6 +149,40 @@ class LiveRunnerReportingTests(unittest.TestCase):
             self.assertTrue((Path(tmpdir) / "rescored" / "report.html").exists())
             discovered = discover_saved_traces(traces_dir)
             self.assertEqual(len(discovered), 1)
+
+    def test_rescore_saved_traces_keeps_external_trace_paths_valid_for_viewer(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            original_cwd = Path.cwd()
+            tmp_path = Path(tmpdir)
+            try:
+                os.chdir(tmp_path)
+                traces_dir = Path("fixtures") / "traces"
+                traces_dir.mkdir(parents=True)
+                payload = _fixture_trace()
+                payload["eval"] = {
+                    "case_id": "voyager_happy_path",
+                    "repeat_index": 1,
+                    "attempt_index": 1,
+                    "selected_for_scoring": True,
+                    "transient_error": False,
+                }
+                (traces_dir / "voyager.json").write_text(
+                    json.dumps(payload, indent=2),
+                    encoding="utf-8",
+                )
+
+                result = rescore_saved_traces(
+                    input_dir=traces_dir,
+                    cases_dir=ROOT / "cases",
+                    output_dir=Path("eval_runs") / "judge_rescored_haiku45",
+                )
+
+                repeat = result["report"]["cases"][0]["repeats"][0]
+                self.assertTrue(Path(repeat["trace_path"]).is_absolute())
+                self.assertTrue(Path(repeat["trace_path"]).exists())
+                self.assertTrue((Path("eval_runs") / "judge_rescored_haiku45" / "report.html").exists())
+            finally:
+                os.chdir(original_cwd)
 
     def test_diff_flags_regressions(self) -> None:
         previous = {

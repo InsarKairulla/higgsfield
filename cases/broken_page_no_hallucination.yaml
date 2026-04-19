@@ -47,6 +47,13 @@ expected_behavior:
     - name: quote_grounding
       config:
         require_extract_quotes: false
+    - name: factual_correctness
+      config:
+        pass_threshold: 0.8
+        focus: Check that the answer stays faithful to the fetched broken page and does not invent extra page content.
+    - name: citation_grounding_quality
+      config:
+        pass_threshold: 0.75
+        focus: Check that the answer is grounded in the sparse fetched page rather than its title or unrelated Voyager facts.
 notes:
   hypothesis: The title looks useful, but the page body is empty, so this should catch title-snippet hallucinations.
-

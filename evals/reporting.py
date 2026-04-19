@@ -13,7 +13,7 @@ def _relative_path(path: str | Path, base_dir: Path) -> str:
     try:
         return str(candidate.resolve().relative_to(base_dir.resolve()))
     except ValueError:
-        return str(candidate)
+        return str(candidate.resolve())
 
 
 def _percentile(values: list[int], percentile: int) -> int:

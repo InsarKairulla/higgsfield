@@ -13,8 +13,9 @@ from typing import Any, Callable
 from dotenv import load_dotenv
 
 from evals.cases import CaseSpec, load_cases
+from evals.judges import build_judge_client, resolve_judge_config
 from evals.reporting import build_report, write_report
-from evals.scoring import score_case
+from evals.scoring import ScoringContext, score_case
 from evals.trace import Trace
 from evals.viewer import write_run_viewer
 
@@ -176,6 +177,7 @@ def _run_case_repeat(
     max_retries: int,
     retry_delay_s: float,
     run_agent_fn: RunAgentFn,
+    scoring_context: ScoringContext,
 ) -> TraceRecord:
     attempts: list[dict[str, Any]] = []
     selected_trace_path: Path | None = None
@@ -238,7 +240,7 @@ def _run_case_repeat(
     attempts[-1]["selected_for_scoring"] = True
 
     trace = Trace.from_path(selected_trace_path)
-    score = score_case(case, trace)
+    score = score_case(case, trace, context=scoring_context)
     return {
         "case": case,
         "repeat_index": repeat_index,
@@ -260,11 +262,25 @@ def run_live_suite(
     retry_delay_s: float = 1.0,
     previous_report: dict[str, Any] | None = None,
     run_agent_fn: RunAgentFn | None = None,
+    judge_provider: str | None = None,
+    judge_model: str | None = None,
+    judge_max_tokens: int | None = None,
+    no_judge: bool = False,
 ) -> dict[str, Any]:
     cases = load_cases(cases_dir)
     run_dir = _make_run_dir(output_root, "run")
     traces_dir = run_dir / "traces"
     runner = run_agent_fn or _load_default_run_agent()
+    judge_config = resolve_judge_config(
+        provider=judge_provider,
+        model=judge_model,
+        max_tokens=judge_max_tokens,
+        no_judge=no_judge,
+    )
+    scoring_context = ScoringContext(
+        judge_config=judge_config,
+        judge_client=build_judge_client(judge_config),
+    )
 
     futures = []
     results: list[TraceRecord] = []
@@ -280,6 +296,7 @@ def run_live_suite(
                         max_retries=max(0, int(max_retries)),
                         retry_delay_s=float(retry_delay_s),
                         run_agent_fn=runner,
+                        scoring_context=scoring_context,
                     )
                 )
         for future in as_completed(futures):
@@ -296,6 +313,7 @@ def run_live_suite(
             "repeats": max(1, int(repeats)),
             "max_retries": max(0, int(max_retries)),
             "retry_delay_s": float(retry_delay_s),
+            "judge": judge_config.to_dict(),
         },
         previous_report=previous_report,
     )
@@ -365,9 +383,23 @@ def rescore_saved_traces(
     cases_dir: str | Path = "cases",
     output_dir: str | Path | None = None,
     previous_report: dict[str, Any] | None = None,
+    judge_provider: str | None = None,
+    judge_model: str | None = None,
+    judge_max_tokens: int | None = None,
+    no_judge: bool = False,
 ) -> dict[str, Any]:
     case_map = {case.case_id: case for case in load_cases(cases_dir)}
     discovered = discover_saved_traces(input_dir)
+    judge_config = resolve_judge_config(
+        provider=judge_provider,
+        model=judge_model,
+        max_tokens=judge_max_tokens,
+        no_judge=no_judge,
+    )
+    scoring_context = ScoringContext(
+        judge_config=judge_config,
+        judge_client=build_judge_client(judge_config),
+    )
 
     scored: list[dict[str, Any]] = []
     for execution in discovered:
@@ -384,7 +416,7 @@ def rescore_saved_traces(
                 "selected_attempt": execution["selected_attempt"],
                 "attempts": execution["attempts"],
                 "trace": trace,
-                "score": score_case(case, trace),
+                "score": score_case(case, trace, context=scoring_context),
             }
         )
 
@@ -396,7 +428,7 @@ def rescore_saved_traces(
         mode="rescore",
         output_dir=destination,
         cases_dir=cases_dir,
-        config={"input_dir": str(input_dir)},
+        config={"input_dir": str(input_dir), "judge": judge_config.to_dict()},
         previous_report=previous_report,
     )
     report_path = write_report(report, destination)

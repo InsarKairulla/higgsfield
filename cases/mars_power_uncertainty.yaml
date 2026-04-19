@@ -24,10 +24,10 @@ expected_behavior:
             value: Perseverance
           - type: regex
             path: final_answer
-            pattern: "(not clear|not stated|does not say|missing)"
+            pattern: "(not clear|does not clearly|not stated|doesn't clearly|does not explicitly|missing|conflict|contradict|inconsistent)"
           - type: not_regex
             path: final_answer
-            pattern: "(Curiosity.*solar panels|solar panels.*Curiosity)"
+            pattern: "(Curiosity\\s+(is|uses|runs on|is powered by)\\s+solar panels|solar panels\\s+(power|powering|are used by)\\s+Curiosity)"
           - type: citations_are_fetched
     - name: tool_efficiency
       config:
@@ -53,6 +53,13 @@ expected_behavior:
     - name: quote_grounding
       config:
         require_extract_quotes: false
+    - name: factual_correctness
+      config:
+        pass_threshold: 0.8
+        focus: Check that Curiosity is described correctly and that unsupported claims about Perseverance are avoided.
+    - name: contradiction_disclosure
+      config:
+        pass_threshold: 0.75
+        focus: Check whether the answer discloses conflicting rover-power evidence without turning that disclosure into a direct false claim.
 notes:
   hypothesis: One Mars comparison page is wrong about rover power, while the cleaner Perseverance page omits the detail.
-

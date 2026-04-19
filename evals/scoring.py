@@ -13,6 +13,7 @@ class MetricResult:
     passed: bool
     score: float
     summary: str
+    skipped: bool = False
     details: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -21,8 +22,15 @@ class MetricResult:
             "passed": self.passed,
             "score": self.score,
             "summary": self.summary,
+            "skipped": self.skipped,
             "details": self.details,
         }
+
+
+@dataclass
+class ScoringContext:
+    judge_config: Any = None
+    judge_client: Any = None
 
 
 @dataclass
@@ -32,11 +40,11 @@ class CaseScore:
     metrics: list[MetricResult]
 
     def failed_metrics(self) -> list[MetricResult]:
-        return [metric for metric in self.metrics if not metric.passed]
+        return [metric for metric in self.metrics if not metric.passed and not metric.skipped]
 
     def failure_reason(self) -> str:
         for metric in self.metrics:
-            if not metric.passed:
+            if not metric.passed and not metric.skipped:
                 return metric.summary
         return ""
 
@@ -49,7 +57,7 @@ class CaseScore:
         }
 
 
-MetricFn = Callable[[CaseSpec, Trace, dict[str, Any]], MetricResult]
+MetricFn = Callable[[CaseSpec, Trace, dict[str, Any], ScoringContext], MetricResult]
 _METRIC_REGISTRY: dict[str, MetricFn] = {}
 
 
@@ -71,11 +79,16 @@ def get_metric(name: str) -> MetricFn:
         raise KeyError(f"unknown metric plugin: {name}") from exc
 
 
-def score_case(case: CaseSpec, trace: Trace) -> CaseScore:
+def score_case(
+    case: CaseSpec,
+    trace: Trace,
+    context: ScoringContext | None = None,
+) -> CaseScore:
+    scoring_context = context or ScoringContext()
     results: list[MetricResult] = []
     for metric in case.metrics:
         scorer = get_metric(metric.name)
-        results.append(scorer(case, trace, metric.config))
+        results.append(scorer(case, trace, metric.config, scoring_context))
     return CaseScore(
         case_id=case.case_id,
         passed=all(result.passed for result in results),

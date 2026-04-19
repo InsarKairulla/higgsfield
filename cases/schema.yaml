@@ -56,7 +56,12 @@ expected_behavior:
     - name: quote_grounding
       config:
         require_extract_quotes: true
+    - name: factual_correctness
+      config:
+        pass_threshold: 0.75
+    - name: citation_grounding_quality
+      config:
+        pass_threshold: 0.7
 notes:
   hypothesis: Why this case exists.
   rubric_todo: Future judge rubric path can be added here.
-

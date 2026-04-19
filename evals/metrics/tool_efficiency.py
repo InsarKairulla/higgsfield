@@ -15,7 +15,7 @@ def _build_summary(checks: list[dict]) -> tuple[bool, str]:
 
 
 @register_metric("tool_efficiency")
-def score_tool_efficiency(case: CaseSpec, trace: Trace, config: dict) -> MetricResult:
+def score_tool_efficiency(case: CaseSpec, trace: Trace, config: dict, _context) -> MetricResult:
     tool_names = trace.tool_call_names()
     counts = Counter(tool_names)
     checks: list[dict] = []
@@ -90,4 +90,3 @@ def score_tool_efficiency(case: CaseSpec, trace: Trace, config: dict) -> MetricR
         summary=summary,
         details={"case_id": case.case_id, "checks": checks, "tool_counts": dict(counts)},
     )
-

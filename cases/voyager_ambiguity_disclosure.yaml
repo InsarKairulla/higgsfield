@@ -43,6 +43,9 @@ expected_behavior:
     - name: quote_grounding
       config:
         require_extract_quotes: false
+    - name: ambiguity_handling
+      config:
+        pass_threshold: 0.8
+        focus: Check whether the answer explicitly disambiguates Voyager 1 versus Voyager 2.
 notes:
   hypothesis: The corpus explicitly warns that casual references to Voyager are ambiguous.
-

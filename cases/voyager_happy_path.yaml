@@ -50,6 +50,13 @@ expected_behavior:
     - name: quote_grounding
       config:
         require_extract_quotes: true
+    - name: factual_correctness
+      config:
+        pass_threshold: 0.8
+        focus: Verify the crossing year and the cited evidence summary against fetched NASA content.
+    - name: citation_grounding_quality
+      config:
+        pass_threshold: 0.75
+        focus: Check that the answer stays close to the fetched page and does not overstate the evidence.
 notes:
   hypothesis: Baseline happy path for a public factual question.
-

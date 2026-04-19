@@ -48,9 +48,20 @@ expected_behavior:
         require_finish: true
         max_answer_words: 120
         require_citations_fetched: true
+        forbidden_patterns:
+          - "<finish>"
+          - "</?invoke>"
+          - "<parameter\\s+name="
     - name: quote_grounding
       config:
         require_extract_quotes: true
+    - name: factual_correctness
+      config:
+        pass_threshold: 0.8
+        focus: Check that the answer gets thylakoid versus stroma and the green-light explanation right.
+    - name: contradiction_disclosure
+      config:
+        pass_threshold: 0.75
+        focus: Check whether the answer handles the conflicting biology pages instead of blending them together.
 notes:
   hypothesis: The corpus has multiple wrong secondary pages about photosynthesis, so this should catch source selection failures.
-

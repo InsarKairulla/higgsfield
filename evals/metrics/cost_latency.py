@@ -13,7 +13,7 @@ def _build_summary(checks: list[dict]) -> tuple[bool, str]:
 
 
 @register_metric("cost_latency")
-def score_cost_latency(case: CaseSpec, trace: Trace, config: dict) -> MetricResult:
+def score_cost_latency(case: CaseSpec, trace: Trace, config: dict, _context) -> MetricResult:
     checks: list[dict] = []
 
     max_wall_time_ms = config.get("max_wall_time_ms")
@@ -70,4 +70,3 @@ def score_cost_latency(case: CaseSpec, trace: Trace, config: dict) -> MetricResu
         summary=summary,
         details={"case_id": case.case_id, "checks": checks},
     )
-
