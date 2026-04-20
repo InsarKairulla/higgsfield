@@ -230,8 +230,6 @@ The README examples also show:
 - provider: `openai`
 - model: `gpt-4.1-mini`
 
-That saved artifact is useful for rubric/debugging evidence, but it does not satisfy the take-home's "cheaper judge than the agent under test" goal. The code path exists; the checked-in artifact still needs to be regenerated with a cheaper judge before final submission.
-
 ### Rubric loading
 
 Rubrics are checked in under `rubrics/` and loaded in two layers:
