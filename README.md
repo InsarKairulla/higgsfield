@@ -4,7 +4,7 @@
 
 This repository contains two things:
 
-1. The shipped Deep Research Lite agent in `agent.py`, `tools.py`, and `run.py`.
+1. The Deep Research Lite agent in `agent.py`, `tools.py`, and `run.py`.
 2. A local, file-based evaluation framework built around that agent.
 
 The agent is treated as a black box. The eval layer loads YAML cases from `cases/`, runs the agent live when credentials are present, persists raw trace JSON, can rescore cached traces without rerunning the agent, and writes JSON plus static HTML reports. Everything stays local: no database and no frontend framework.
@@ -14,7 +14,7 @@ The framework has two scoring layers:
 - Deterministic metrics over the cached trace.
 - LLM-as-judge metrics under `evals/judges/`.
 
-## Current gaps
+## Current gap
 
 - The code supports a cheaper OpenAI-backed judge provider, but the checked-in judge artifact was generated with `claude-haiku-4-5`
 
@@ -301,7 +301,6 @@ Manual spot-check agreement: 7/8 = 87.5%
 ### Known judge limitations and failure modes
 
 - The judge only sees the evidence present in the trace. If retrieval is weak, the judge is constrained too.
-- Position bias is not explicitly measured yet. I have not run systematic order-swapped or answer-order ablations.
 - Self-preference is only partially mitigated. The framework supports cross-provider judging, but the checked-in judge artifact currently uses Anthropic on an Anthropic agent run.
 - Injection-through-agent-output is addressed in the judge prompt by treating answer text, citations, fetched pages, and extracted quotes as untrusted evidence, but I have not separately stress-tested this beyond the prompt design.
 - Rubric ambiguity remains a real risk. The strongest example is the Mars case, where brittle deterministic wording and nuanced uncertainty disclosure can disagree.
@@ -327,16 +326,12 @@ Manual spot-check agreement: 7/8 = 87.5%
 
 ## What I'd add next
 
-- Better sampling strategies for repeats. Right now repeats are uniform. I would bias additional samples toward known flaky cases, judge-sensitive cases, and conflict-heavy retrieval cases.
+- Better sampling strategies for repeats. Right now repeats are uniform. I would bias additional samples toward known flaky cases, judge-sensitive cases, and conflicting retrieval cases.
 
-- Statistical significance and confidence intervals. The current report shows raw pass rates and `x/N passed`, but not uncertainty bands or tests for whether a regression is likely real.
+- Statistical significance and confidence intervals. The current report shows raw pass rates and `x/N passed`, which is useful, but it does not tell us how confident we should be that a regression is real. Confidence intervals or lightweight significance checks could be added.
 
 - Golden-set maintenance. I would version a larger checked-in trace set, track rubric revisions explicitly, and make it easy to re-baseline when the corpus or case wording changes.
-
-- Drift detection. The next step after per-run diffs is trend detection across many runs: pass-rate drift, cost drift, latency drift, and metric-specific drift.
 
 - Stronger judge validation. I would add adjudication sets, provider cross-checks, calibration prompts, and explicit disagreement review between judge metrics and deterministic checks.
 
 - More adversarial cases. The current 10-case suite is a solid start, but it should expand on conflicting-source handling, subtle refusal boundaries, prompt injection, and broken-page retrieval traps.
-
-- Better report navigation. The current HTML viewer is intentionally minimal. The next improvements would be anchor links from `report.json` summaries into the HTML, filtering by metric, and quicker navigation across repeats.
