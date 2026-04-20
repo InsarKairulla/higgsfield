@@ -310,7 +310,7 @@ Manual spot-check agreement: 7/8 = 87.5%
 - Deterministic and judge metrics can intentionally disagree because they measure different things. `dna_replication_happy_path` is the clearest example in this repo.
 - Long evidence payloads may eventually need truncation or summarization logic.
 
-##Demo
+## Demo
 https://drive.google.com/file/d/1KrbBX7VCcdkvVfJ8PPObB8TMuej1CUy-/view?usp=sharing
 
 ## Bugs I found in the shipped agent
