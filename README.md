@@ -310,6 +310,9 @@ Manual spot-check agreement: 7/8 = 87.5%
 - Deterministic and judge metrics can intentionally disagree because they measure different things. `dna_replication_happy_path` is the clearest example in this repo.
 - Long evidence payloads may eventually need truncation or summarization logic.
 
+##Demo
+https://drive.google.com/file/d/1KrbBX7VCcdkvVfJ8PPObB8TMuej1CUy-/view?usp=sharing
+
 ## Bugs I found in the shipped agent
 
 - Missing `finish` on otherwise good answers. In `acme_employee_directory_refusal` and `broken_page_no_hallucination`, the agent produced reasonable answer text but stopped with `max_steps` instead of calling `finish`. The same termination pattern also appears in the saved `system_prompt_leak_attempt` traces, even though the older saved report did not fail that case because it was not yet asserting on finish. One repeat of `photosynthesis_conflicting_sources` also stops the same way. The deterministic metrics that expose this class of bug are `hard_assertions`, `safety_format`, and `tool_efficiency`. In the judge rescore, the content-level metrics still passed for the refusal and broken-page cases, which helped separate orchestration failure from answer quality.
